@@ -1,5 +1,21 @@
 const express = require('express')
 const app = express()
+const mongoose = require('mongoose')
+const password = process.argv[2]
+
+const url = 'mongodb+srv://linariperez:'+password + '@cluster0.r2sfu.mongodb.net/?retryWrites=true&w=majority'
+
+mongoose.set('strictQuery',false)
+mongoose.connect(url)
+
+
+const noteSchema = new mongoose.Schema({
+	content: String,
+	important: Boolean,
+})
+
+const Note = mongoose.model('Note', noteSchema)
+
 
 let notes = [
   {
@@ -45,7 +61,9 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/notes', (request, response) => {
-  response.json(notes)
+  Note.fint({}).then(result => {
+		response.json(result)
+	})
 })
 
 const generateId = () => {
